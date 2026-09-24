@@ -3,6 +3,27 @@ import os
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+import sqlite3
+
+DB_PATH = 'reminders.db'
+
+
+def init_db():
+    conn = sqlite3.connect(DB_PATH)
+    conn.execute(
+        """
+        CREATE TABLE IF NOT EXISTS reminders (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id INTEGER NOT NULL,
+            channel_id INTEGER NOT NULL,
+            message TEXT NOT NULL,
+            remind_at REAL NOT NULL
+        )
+        """
+    )
+    conn.commit()
+    conn.close()
+
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -34,4 +55,6 @@ async def hello(ctx: commands.Context):
 
 
 if __name__ == "__main__":
+    init_db()
     bot.run(TOKEN)
+
